@@ -3,6 +3,10 @@ $conn = mysqli_connect("localhost", "root", "", "lab_db");
 
 // Save the comment when the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['comment'])) {
+    //$comment = $_POST['comment'];
+    // VULNERABLE: Direct insertion without sanitization
+    //mysqli_query($conn, "INSERT INTO guestbook (comment) VALUES ('$comment')");
+
     $comment = mysqli_real_escape_string($conn, $_POST['comment']);
     
     // Now the insert will work even with symbols
@@ -21,9 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['comment'])) {
 <?php
 $result = mysqli_query($conn, "SELECT comment FROM guestbook");
 while($row = mysqli_fetch_assoc($result)) {
-    // TASK 4 VULNERABILITY: The "echo" displays raw HTML/Script tags
     //echo "<div>User Comment: " . $row['comment'] . "</div><br>";
-    // Use this to display safely
     echo "<div>User Comment: " . htmlspecialchars($row['comment']) . "</div>";
 }
 ?>
